@@ -1,0 +1,56 @@
+// 46.28% / 82.98%
+// time O(N) space O(N)
+
+class Solution {
+public:
+    int minimumLengthEncoding(vector<string>& words) {
+        
+        /* reverse the word in words */
+        for(auto& word : words)
+            std::reverse(word.begin(), word.end());
+        /* sort words */
+        std::sort(words.begin(), words.end());
+        
+        /* add words without suffix with other into finalList */
+        vector<string> finalList;
+        
+        for(auto& word : words){
+            
+            if(finalList.empty()) 
+                finalList.push_back(word);
+              
+            if( eatWord(finalList.back(), word) ){
+                finalList.pop_back();
+                finalList.push_back(word);
+            }else 
+                finalList.push_back(word);
+            
+        }
+        
+        int output = 0;
+        for(auto& word : finalList){
+            output += word.size()+1;
+        }
+        
+        
+        return output;
+    }
+    
+    
+    
+    bool eatWord( const string& wrd1, const string& wrd2){
+        
+        if(wrd1.size() > wrd2.size()) return false;
+        
+        int iter1 = 0, iter2 = 0;
+        while(iter1 < wrd1.size() && iter2 < wrd2.size()){
+            if(wrd1.at(iter1) != wrd2.at(iter2)) return false; 
+            ++iter1;
+            ++iter2;
+        }
+        
+        return true; //true when wrd2 can eat wrd1
+    }
+
+
+};
