@@ -1,0 +1,89 @@
+// 59.04% / 13.30%
+
+class TrieNode {
+public:
+  
+    TrieNode(): count(0), leaf(false) {
+      for( auto& child : children ){
+          child = nullptr;
+      }
+    }  
+
+    TrieNode(int count): count(count), leaf(false){
+      for( auto& child : children ){
+          child = nullptr;
+      } 
+    }
+    
+    bool hasLeaf(){
+        return leaf;
+    }
+    
+    void leafHas(){
+        leaf = true;
+    }
+    
+    int getCount(){
+        return count;
+    }
+
+    TrieNode* children[26];
+    int count;
+    bool leaf;
+    
+};
+
+class Trie {
+public:
+    Trie(): root(new TrieNode()) {}
+    
+  
+    TrieNode* insert(string& str){
+        TrieNode* ptr = root;
+        int count = 0;
+        for(auto& c : str){
+            ++count;
+            
+            if(ptr->children[c - 'a']){
+                ptr=ptr->children[c - 'a'];
+            }
+            else{
+                ptr->children[c - 'a'] = new TrieNode(count);
+                ptr->leafHas();
+                ptr=ptr->children[c - 'a'];
+                
+            }
+                   
+        }
+        
+        return ptr;
+    }
+    
+private:
+    TrieNode* root;
+
+};
+
+
+class Solution {
+public:
+    
+    int minimumLengthEncoding(vector<string>& words) {
+        
+        Trie* trie = new Trie();
+        map<string, TrieNode*> words_last_char;
+
+        for(auto& word: words){
+            std:reverse(word.begin(), word.end());
+            TrieNode* last_char = trie->insert(word);
+            words_last_char[word] = last_char;
+        }
+
+        int output = 0;
+        for(auto const& [key, node] : words_last_char){
+            if(!node->hasLeaf()) output += node->getCount() + 1;
+        }
+        
+        return output;
+    }
+};
